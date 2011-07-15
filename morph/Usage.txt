@@ -1,6 +1,6 @@
 To compile and run from source code:
     - Navigate to the src directory:
-        cd MorphingApplication/src;
+        cd morph/src;
     - Compile all Java files:
         javac *.java;
     - Run the Main class with a modified classpath
@@ -8,6 +8,6 @@ To compile and run from source code:
 
 To run from the Jar archives:
     - Navigate to the bin directory:
-        cd MorphingApplication/bin;
+        cd morph/bin;
     - Run the morpher jar file:
         java -jar Morph.jar
