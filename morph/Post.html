@@ -1,0 +1,117 @@
+Image morphing is the process of interpolating between two images in order to create something which looks like a nice blend between the two input images. If you've never played with an image morphing program, go find one - it's certainly an amusing way to spend a few minutes, especially if you have some pictures of family and friends lying around to play with.
+
+Here's a fun example of image morphing. The creator took a bunch of pictures of women in art and here is the result of nicely morphing them into each other.
+
+<div class="separator" style="clear: both; text-align: center;">
+<object class="BLOGGER-youtube-video" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0" data-thumbnail-src="http://3.gvt0.com/vi/nUDIoN-_Hxs/0.jpg" height="266" width="320"><param name="movie" value="http://www.youtube.com/v/nUDIoN-_Hxs&fs=1&source=uds" />
+<param name="bgcolor" value="#FFFFFF" />
+<embed width="320" height="266"  src="http://www.youtube.com/v/nUDIoN-_Hxs&fs=1&source=uds" type="application/x-shockwave-flash"></embed></object></div>
+
+Sometimes, you'll see more amusing pictures on the web, such as&nbsp;<a href="http://www.blorge.com/images/Funwithmorphing_7082/morph6.jpg">this one</a>.
+
+<b>How?</b>
+In this post, I'll attempt to explain exactly how these image morphs are done, and provide you with some source code to play with if you'd like. In this post, I'll refer to the first picture as the&nbsp;initial&nbsp;image, the second picture as the target image, and the amount of interpolation as \(\alpha\).
+
+The process of image morphing has several steps:
+
+<ol>
+<li>Subdivide the initial and target image into triangles</li>
+<li>Create a mapping between the triangles. One triangle in the initial image must correspond to one triangle in the final image.</li>
+<li>Individually morph each triangle</li>
+<li>Combine all the triangles into one image</li>
+</ol>
+<div>
+<b>Subdivision</b></div>
+<div>
+The exact way you subdivide the image into triangles doesn't really matter. What matters is that the triangles are mapped one to one nicely - if a certain triangle on the first image encloses the subject's nose, the corresponding triangle in the target image should <i>also</i>&nbsp;enclose the subject's nose.&nbsp;</div>
+<div>
+
+</div>
+<div>
+Here's an example of a bad mapping:</div>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="http://4.bp.blogspot.com/-j6yHyNoN-3A/TiBc0RG6-pI/AAAAAAAAAAo/NJoWq-NFuDw/s1600/one.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="200" src="http://4.bp.blogspot.com/-j6yHyNoN-3A/TiBc0RG6-pI/AAAAAAAAAAo/NJoWq-NFuDw/s320/one.png" width="320" /></a></div>
+<div class="separator" style="clear: both; text-align: center;">
+Default triangle mapping</div>
+<div class="separator" style="clear: both; text-align: center;">
+
+</div>
+<div class="separator" style="clear: both; text-align: left;">
+Here's a better one, although not much (these two images don't really map well to each other):</div>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="http://1.bp.blogspot.com/-rbol3jdhaU4/TiBdoQV_B1I/AAAAAAAAAAs/sUJi1UT4Vn4/s1600/two.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="205" src="http://1.bp.blogspot.com/-rbol3jdhaU4/TiBdoQV_B1I/AAAAAAAAAAs/sUJi1UT4Vn4/s320/two.png" width="320" /></a></div>
+<div class="separator" style="clear: both; text-align: left;">
+
+</div>
+<div class="separator" style="clear: both; text-align: center;">
+
+</div>
+<div>
+Some morphing algorithms even attempt to use&nbsp;<a href="https://ccrma.stanford.edu/~jacobliu/368Report/index.html">computer vision and feature detection</a>&nbsp;to perform automated motion, without having a human adjust the triangle mesh.&nbsp;</div>
+<div>
+
+</div>
+<div>
+<b>Morphing (Affine Transform)</b></div>
+<div>
+In order to morph between the two triangles, we can use coordinate geometry and linear algebra. We are given six points:</div>
+<div>
+<ul>
+<li>Points A, B, C (from the first triangle)</li>
+<li>Corresponding points a, b, c (from the second triangle)</li>
+</ul>
+<div>
+Since both are just triangles, we know that applying a linear transformation will yield the conversion:</div>
+</div>
+<div>
+\[a = TA + S\]\[b = TB + S\]\[b = TB + S\]
+
+</div>
+Where \(T\) is a transformation matrix (shear, scale, rotate)
+\[ \left( \begin{array}{ccc} x &amp; y \\ z &amp; w \end{array} \right)\]
+and \(S\) is the translation matrix
+\[ \left( \begin{array}{ccc} m \\ n \end{array} \right).\]
+Together, these two matrices define a linear transformation.
+
+Since of the equations above dealt with points on a two-dimensional plane, they were actually two equations each. Coincidentally, our linear transformation is defined by six variables - the same number of equations we are given. In other words, the linear transformation we want to use is entirely defined by the two triangles we've picked. You can go ahead and use WolframAlpha (or a piece of paper and pen) to solve the system of six equations, resulting in the affine transform \(T(x)\). Also, calculate the inverse \(T^{-1}(x)\) - we'll need that later.
+<div>
+
+</div>
+<div>
+<b>Interpolation</b></div>
+<div>
+So, we have our initial and target triangles, and a method of finding the transforms (and inverse transforms) between any two triangles. We have our interpolation factor \(\alpha\), describing how far along the interpolation we've gone (1.0 is target image, 0.0 is initial, 0.5 is halfway). What do we do now?&nbsp;</div>
+<div>
+
+</div>
+<div>
+First, pick a triangle in the initial image - we're only morphing one triangle at a time. Now, get the corresponding triangle in the target image, and draw lines connecting each of the point, as shown below. The intermediate triangle - one you want to be calculating, is going to have vertices along those lines.</div>
+<div class="separator" style="clear: both; text-align: center;">
+</div>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="http://4.bp.blogspot.com/-NRn4hgeHxzk/TiBkzITbEkI/AAAAAAAAAA0/FrDFtBAIy9Y/s1600/Untitleddrawing+%25281%2529.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="166" src="http://4.bp.blogspot.com/-NRn4hgeHxzk/TiBkzITbEkI/AAAAAAAAAA0/FrDFtBAIy9Y/s320/Untitleddrawing+%25281%2529.png" width="320" /></a></div>
+<div>
+
+</div>
+<div>
+
+</div>
+<div>
+For each pixel inside the intermediate triangle, we want to find the color to paint it. Follow these steps:</div>
+<div>
+<ol>
+<li>Find the transformation from the intermediate triangle to the initial triangle</li>
+<li>Get the color of that pixel, multiplied by \(\alpha\)</li>
+<li>Find the transformation from the intermediate triangle to the target triangle</li>
+<li>Get the color of that pixel, multiplied by \(1 - \alpha\)</li>
+<li>Add the two colors, and paint your pixel with the result!</li>
+</ol>
+<div>
+Once you apply that algorithm for all pixels inside all triangles, you'll get the appropriate morph.</div>
+<div>
+
+</div>
+<div>
+For your convenience and possible amusement, I've implemented this and put the result&nbsp;<a href="https://github.com/silveryllium/blog/tree/master/morph">on GitHub</a>.</div>
+</div>
+
