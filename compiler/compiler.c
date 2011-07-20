@@ -45,9 +45,11 @@ int main(int argc, char** argv){
     token** tokens = tokenize(text, &num_tokens);
     free(text);
 
-    /* Print all tokens */
-    for(int i = 0; i < num_tokens; i++)
-        print_token(tokens[i]);
+    /* Parse tokens */
+    init_parser();
+    int index = 0;
+    statement* statement = parse_statement(tokens, &index, num_tokens);
+    print_statement(statement);
 
     /* Free all tokens */
     for(int i = 0; i < num_tokens; i++)

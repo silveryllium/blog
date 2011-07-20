@@ -1,0 +1,46 @@
+Compiler Structure:
+    The main function main() collects all the code from all the files it is
+    passed and concatenates it into one string. It passes the string to
+    the tokenizer.
+
+    The tokenizer converts text into a series of tokens, each of which is a
+    semantically meaninful piece of code. A token may represent an identifier,
+    constant, semicolon, plus sign, and so on.
+
+    The tokens that the tokenizer creates are passed into the parser, which
+    converts them into a more abstract representation consisting of a series
+    of statements, which may be type declarations, variable declarations, or
+    function declarations. The statements may use expressions, which the 
+    parser uses a separate type for. Finally, the parser creates a type
+    table where it stores all the types it knows about and all the user-defined
+    types it finds.
+
+File Structure:
+    util.c      - contains various utilities for file reading and string work
+    compiler.c  - contains main() function which calls all other pieces
+    tokens.c    - tokenizer to convert text into token stream
+    parser.c    - parser, converts tokens into statements and expressions
+
+Conventions:
+
+You'll note several conventions or patterns that I use throughout the code. Experienced C programmers
+will recognize many of these conventions and probably even point out how I used them wrong, but for those
+of you who are not as familiar with C, some of them are described below.
+
+Multiple return via pointers:
+    Often, functions that return arrays (such as the tokenizer, or parts of the parser) will somehow want to communicate
+    the length of the returned array. Since C arrays are just memory portions, the last argument of these functions will
+    often be an int*, and the function will write the length to the integer that the pointer refers to. The caller will
+    use the function as my_function(..., &length_var), and the length of the returned array will be stored in the 
+    length_var variable. You might also notice similar things with functions that consume parts of a stream (whether
+    it's a character stream like in the tokenizer, or a token stream like in the parser). Here are two examples of this
+    convention in use:
+
+    /* Returns array and stores length in num_tokens */
+    int num_tokens;
+    token** tokens = tokenize(text, &num_tokens);
+
+    /* Consumes text and stores number of characters consumed in str_length */
+    int str_length;
+    token* str_token = get_string_token(text, index, &str_length);
+

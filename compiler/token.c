@@ -80,6 +80,7 @@ int TOKEN_SIZEOF = 34;
 int TOKEN_STRING = 29;
 int TOKEN_CHARACTER = 30; 
 int TOKEN_IDENT = 31;
+int TOKEN_NUMBER = 52;
 
 /* The token type, containing an int type and the associated data */
 typedef struct _token {
@@ -90,10 +91,10 @@ typedef struct _token {
 /* If the current index is on a single character token, create the token, else return NULL */
 token* get_single_char_token(int index, char* text){
     /* All the types of single-character tokens and their corresponding characters */
-    char single[15] = {'(', ')', '{', '}', '[', ']', '+', '-', '*', '/', ';', ',', '>', '<', '=', '.'};
-    int single_token_types[15] = {TOKEN_OPAREN, TOKEN_CPAREN, TOKEN_OBRACE, TOKEN_CBRACE, TOKEN_OBRACKET, TOKEN_CBRACKET,
-        TOKEN_PLUS, TOKEN_MINUS, TOKEN_DIV, TOKEN_SEMICOLON, TOKEN_COMMA, TOKEN_GREATER, TOKEN_LESS, TOKEN_ASSIGN, TOKEN_DOT};
-    int singles = 15;
+    char single[16] = {'(', ')', '{', '}', '[', ']', '+', '-', '*', '/', ';', ',', '>', '<', '=', '.'};
+    int single_token_types[16] = {TOKEN_OPAREN, TOKEN_CPAREN, TOKEN_OBRACE, TOKEN_CBRACE, TOKEN_OBRACKET, TOKEN_CBRACKET,
+        TOKEN_PLUS, TOKEN_MINUS, TOKEN_TIMES, TOKEN_DIV, TOKEN_SEMICOLON, TOKEN_COMMA, TOKEN_GREATER, TOKEN_LESS, TOKEN_ASSIGN, TOKEN_DOT};
+    int singles = 16;
 
     /* Test each type of token */
     for(int i = 0; i < singles; i++){
@@ -112,11 +113,11 @@ token* get_single_char_token(int index, char* text){
 /* If the current index is on a keyword, create a keyword token and return the length of it, else return NULL */
 token* get_keyword_token(int index, char* text, int* len){
     /* All possible keywords */
-    char* keywords[14] = {"typedef", "int", "char", "FILE", "long", "struct", "return",
+    char* keywords[18] = {"typedef", "int", "char", "FILE", "long", "struct", "return",
              "equals", "||", "&&", ">=", "<=", "void", "sizeof", "for", "while", "if", "->"};
-    int keyword_token_types[14] = {TOKEN_TYPEDEF, TOKEN_INT, TOKEN_CHAR, TOKEN_FILE, TOKEN_LONG, TOKEN_STRUCT, TOKEN_RETURN,
+    int keyword_token_types[18] = {TOKEN_TYPEDEF, TOKEN_INT, TOKEN_CHAR, TOKEN_FILE, TOKEN_LONG, TOKEN_STRUCT, TOKEN_RETURN,
         TOKEN_EQUALS, TOKEN_OR, TOKEN_AND, TOKEN_GREATEREQ, TOKEN_LESSEQ, TOKEN_VOID, TOKEN_SIZEOF, TOKEN_FOR, TOKEN_WHILE, TOKEN_IF, TOKEN_REF};
-    int num_keywords = 14;
+    int num_keywords = 18;
 
     /* Get length of text, so we don't overflow */
     int text_len = strlen(text);
@@ -144,7 +145,6 @@ token* get_keyword_token(int index, char* text, int* len){
     /* If none of the keywords match, return NULL */
     return NULL;
 }
-
 
 /* Read a string token, starting with the character after the first quote */
 token* get_string_token(int index, char* text, int* str_length){
@@ -235,6 +235,39 @@ token* get_ident_token(int index, char* text, int* ident_length){
     return tok;
 }
 
+/* Read a number token, starting with the first character */
+token* get_num_token(int index, char* text, int* num_length){
+    /* Keep track of start and end index */
+    int start_index = index;
+    int end_index = index;
+    
+    /* Use length of input text to make sure we don't read too far */
+    int len = strlen(text);
+
+    /* Keep incrementing end index and length of identifier until we encounter End-of-File or a non-ident character */
+    *num_length = 0;
+    while(end_index < len && (text[end_index] >=  '0' && text[end_index] <=  '9')){
+        (*num_length)++;
+        end_index++;
+    }
+
+    /* Allocate space for the identifier, make the last character a terminator */
+    char* data = calloc(1, *num_length + 1);
+    data[*num_length] = '\0';
+
+    /* Copy over data from input text to identifier string */
+    for(int i = start_index; i < end_index; i++){
+        char next_char = text[i];
+        data[i - start_index] = next_char;
+    }
+
+    /* Create and return token */
+    token* tok = calloc(1, sizeof(token));
+    tok->type = TOKEN_NUMBER;
+    tok->data = data;
+    return tok;
+}
+
 /* Add the token to the list, allocating more space if necessary */
 void add_token(token* tok, token*** tokens, int* allocated, int* num){
     /* If we don't have enough memory, allocate more */
@@ -251,7 +284,7 @@ void add_token(token* tok, token*** tokens, int* allocated, int* num){
 /* Print a token for debugging */
 void print_token(token* token){
     if(token->data == NULL)
-        printf("%d\n");
+        printf("%d\n", token->type);
     else
         printf("%d: %s\n", token->type, token->data);
 }
@@ -292,6 +325,21 @@ token** tokenize(char* text, int* num_tokens){
 
             /* Account for ending * / */
             index += 2;
+            continue;
+        }
+
+        /* Preprocessor macros: ignore everything after the # */
+        if(text[index] == '#'){
+            /* Account for # */
+            index++;
+
+            /* Forward until end of line */
+            while(index < len && text[index] != '\n')
+                index++;
+
+            /* Account for newline */
+            index++;
+            continue;
         }
 
         /* Keyword tokens */
@@ -373,6 +421,17 @@ token** tokenize(char* text, int* num_tokens){
 
             /* Account for full length of token */
             index += ident_length;
+            continue;
+        }
+
+        /* Number */
+        if(text[index] >= '0' && text[index] <= 9){
+            int num_length = 0;
+            tok = get_num_token(index, text, &num_length);
+            add_token(tok, &tokens, &allocated, &num);
+
+            /* Account for all digits */
+            index += num_length;
             continue;
         }
 

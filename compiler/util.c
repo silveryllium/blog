@@ -2,6 +2,22 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* Exit with an error */
+void error(char* error){
+    fprintf(stderr, "%s\n", error);
+    /* Cause segfault */
+    *((int*)(NULL)) = 0;
+    exit(1);
+}
+
+/* Duplicate a string */
+char *strdup (char *s) {
+    char *d = (char *)(malloc (strlen (s) + 1)); // Allocate memory
+    if (d != NULL)
+        strcpy (d,s);                            // Copy string if okay
+    return d;                                    // Return new memory
+}
+
 /* Get the length of the file (number of characters) */
 int file_get_length(char* fname){
     /* Open the file */
