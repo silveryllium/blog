@@ -1,0 +1,93 @@
+An equation of state is, in simple terms, an equation describing matter under various physical conditions. The most commonly known one is, of course, the <i>ideal gas law. </i>Unsurprisingly, there are plenty of other gas laws that describe the&nbsp;behavior&nbsp;of gasses more accurately than the ideal gas law.
+<i>
+</i>
+<b>The Ideal Gas Law</b>
+The ideal gas law is an equation of state which describes the properties of a gas given several physical variables: it includes &nbsp;temperature, pressure, amount of material, and volume. According to the ideal gas law,
+\[PV=nRT.\]
+where
+
+<ul>
+<li>\(P\) is pressure of the gas</li>
+<li>\(V\) is volume of the gas</li>
+<li>\(n\) is the amount of gas (number of moles or molecules of gas)</li>
+<li>\(T\) is temperature of the gas (in Kelvin)</li>
+<li>\(R\) is a proportionality constant known as the <a href="http://en.wikipedia.org/wiki/Gas_constant">universal gas constant</a></li>
+</ul>
+<div>
+If pressure increases, either volume decreases, or the gas heats up. If temperature increases, the gas expands or exerts a higher pressure. If the amount of gas decreases, either temperature goes up or pressure or volume go down. Although the ideal gas law can be derived from empirical observations or from the basics of thermodynamics, it can be intuited: more stuff means more volume, or more force pushing it out (pressure), and if things are hot, they push out more.
+
+The ideal gas law depends on a few not-entirely-realistic assumptions. First off, all the molecules have mass but no volume; second off, they experience no intermolecular forces, and finally, they experience perfectly elastic collisions with each other and the walls of the container and the collisions conserve momentum and energy.</div>
+<div>
+
+</div>
+<div>
+Due to the fact that the ideal gas law is so intuitive, most of the time, this equation of state is the only one taught in introductory chemistry and thermodynamics. Other equations of state are usually introduced in more advanced physics and physical chemistry courses, in order to correct for the inaccuracies of the ideal gas law.
+
+<b>Van der Waal's Law</b>
+Another only slightly more complicated equation of state is Van der Waal's law. Van der Waal's law is similar to the ideal gas law, but makes less unreasonable assumptions: it gives the molecules a spherical volume, instead of insisting that the molecules have no volume.
+
+Let's derive Van der Waal's law - essentially a better version of the ideal gas law - by starting with the ideal gas law.
+
+First of all, start with a gas that behaves just like an ideal gas:
+\[p = \frac{RT}{V_m}\]
+where &nbsp;\(V_m = \frac{V}{n}\) is the volume <i>per molecule</i>.
+
+Next, realize that if we decrease the amount of available space for each molecule, the pressure will increase accordingly. Each molecule actually only has \(V_m - \pi (2r)^2\) space available to it, so the new pressure becomes
+\[p = \frac{RT}{V_m - b}\]
+where \(b =&nbsp;\pi (2r)^2\). We can ignore the nature of \(b\) just because it is a constant specific to each type of gas.
+
+Now, if we introduce some attractive forces, we will get the second term of Van der Waal's equation. The attractive force on a given molecule will be proportional to the number of molecules, or, equivalently, the density \(C = \frac{N_A}{V_m}\). The number of molecules is <i>also</i>&nbsp;proportional to density, so the final pressure reduction from attractive forces will be proportional to it's <i>square</i>:
+\[aC^2 = \frac{a}{V_m^2}.\]
+
+The final pressure can be expressed as:
+\[p =&nbsp;\frac{RT}{V_m - b} -&nbsp;\frac{a}{V_m^2}.\]
+If we want to express this equation in a more familiar state, we can substitute with \(V_m = \frac{V}{n}\) and solve for \(nRT\) to get:
+\[(p +&nbsp;&nbsp;\frac{an^2}{V^2})(V - nb) = nRT.\]
+
+The specific values of \(a\) and \(b\) are dependent on the attractive forces between molecules and the size of the molecules. High values of \(a\) come from high attractive forces (polar molecules) and high values of \(b\) will come from large molecules.
+
+<b>What's the Difference?</b>
+Who cares about the minute differences between these two equations of state? Well, in most simple scenarios, the ideal gas law is enough, but often, Van der Waal's equation is more precise. To get an idea of their similarity, we can plot the temperature of the same gas given a pressure and volume (for one mole). For the ideal gas law, this &nbsp;calculation is easy, yielding
+\[T_{ideal}(P, V) = \frac{PV}{nR} = \frac{PV}{R}.\]
+For Van der Waal's equation, we have the similar equation
+\[T_{vdr}(P, V) = \frac{(P +&nbsp;&nbsp;\frac{an^2}{V^2})(V - nb)}{nR} =&nbsp;&nbsp;\frac{(P +&nbsp;&nbsp;\frac{a}{V^2})(V - b)}{R}.\]
+
+As constants, we can use
+\[R = 8.314 \frac{J}{mol\cdot K}.\]
+\[a = 14.166 \frac{L^2\cdot bar}{mol^2} = 0.1466&nbsp;\frac{m^6\cdot Pa}{mol^2} .\]
+\[b = 0.1226&nbsp;\frac{L}{mol} =&nbsp;0.0001226&nbsp;\frac{L}{mol}.\]
+
+These constants describe&nbsp;<a href="http://en.wikipedia.org/wiki/Butane">Butane</a>, a pretty big molecule. Butane is a flammable gas with the atomic formula C<sub>4</sub>H<sub>10</sub>.
+
+So, let's see what the differences in temperature graphs are.
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto; text-align: center;"><tbody>
+<tr><td style="text-align: center;"><div class="separator" style="clear: both; text-align: center;">
+<a href="http://4.bp.blogspot.com/-6YhqqLZA1IQ/TiQqb7pCZHI/AAAAAAAAAA4/iUD85UzVGos/s1600/contour1.gif" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="http://4.bp.blogspot.com/-6YhqqLZA1IQ/TiQqb7pCZHI/AAAAAAAAAA4/iUD85UzVGos/s1600/contour1.gif" /></a></div>
+</td></tr>
+<tr><td class="tr-caption" style="text-align: center;">Contour graph for both equations of state at high volumes and pressures</td></tr>
+</tbody></table>
+In most cases, there won't be a difference. However, sometimes, like at very low temperatures (corresponding to very low pressures), the difference is very noticable:
+
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto; text-align: center;"><tbody>
+<tr><td style="text-align: center;"><div class="separator" style="clear: both; text-align: center;">
+<a href="http://4.bp.blogspot.com/-0qs94sBLlB0/TiQqhcbsDJI/AAAAAAAAAA8/qzLCz_a6WaI/s1600/contour2.gif" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="http://4.bp.blogspot.com/-0qs94sBLlB0/TiQqhcbsDJI/AAAAAAAAAA8/qzLCz_a6WaI/s1600/contour2.gif" /></a></div>
+</td></tr>
+<tr><td class="tr-caption" style="text-align: center;">Ideal Gas Law contour graph</td></tr>
+</tbody></table>
+</div>
+
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto; text-align: center;"><tbody>
+<tr><td style="text-align: center;"><div class="separator" style="clear: both; text-align: center;">
+<a href="http://2.bp.blogspot.com/-sEj3W-ye-KY/TiQqk8iIAVI/AAAAAAAAABA/LuTFDFGOXPc/s1600/contour3.gif" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="http://2.bp.blogspot.com/-sEj3W-ye-KY/TiQqk8iIAVI/AAAAAAAAABA/LuTFDFGOXPc/s1600/contour3.gif" /></a></div>
+</td></tr>
+<tr><td class="tr-caption" style="text-align: center;">Van der Waal's prediction</td></tr>
+</tbody></table>
+<div style="text-align: center;">
+</div>
+
+As you can see, in certain conditions, the results are not even comparable. For this reason, Van der Waal's equation of state tends to be better for certain things such as modeling large molecules or predicting state changes (condensation into liquid).
+
+<b>Notes</b>
+First of all, in reality, neither the ideal gas law nor the Van der Waal's correction of it are used in practice in places where precision is incredibly important, unless it is known in advance that the gas in question behaves very well. However, they're good teaching tools, so these two equations of state (mostly the ideal gas law) are taught at colleges and universities.
+
+Second of all, both the ideal gas law and Van der Waal's law can be derived much more rigorously from thermodynamics using statistical mechanics and entropy considerations. However, even though those derivations are more rigorous and accurate, they are usually less intuitive and thus aren't good for an introductory article, especially if you're not familiar with entropy, the second law of thermodynamics, and so on.
