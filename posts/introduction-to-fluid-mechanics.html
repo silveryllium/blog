@@ -1,0 +1,108 @@
+<b>  1.1. Classical Mechanics </b>
+
+Classical mechanics, the father of physics and perhaps of scientific thought, was initially developed in the 1600s by the famous natural philosophers (the codename for 'physicists') of the 17th century such as Isaac Newton building on the data and observations of astronomers including Tycho Brahe, Galileo, and Johannes Kepler. Classical mechanics concerns itself with the mathematical description of the motion of physical bodies, tying together the concepts of force, momentum, velocity, and energy to describe the behaviour of macroscopic objects [1]. Though it was developed nearly 400 years ago, many of the basic tenets of classical mechanics hold for common situations (excluding microscopic particle dynamics, high-velocity motion, and large-scale mechanics). Classical mechanics holds accurately for scales from 1 picometer (\(10^{-12}\) meters) to \(10^{30}\) meters. Due to its consistent success, classical mechanics has been widely studied by physicists and mathematicians alike. Even though it must rely on quantum mechanics for small-scale motion and special relativity for high-velocity travel, it is considered a mostly complete and solved set of theories. However, there is still one problem in classical mechanics which remains unsolved: the solution - in fact, whether a solution is guaranteed to exist - to the general case of the Navier-Stokes equations for fluid dynamics is unknown.
+
+
+<b>  1.2. Fluid Dynamics and the Navier-Stokes Equations </b>
+The Navier-Stokes equations, developed by Claude-Louis Navier and George Gabriel Stokes in 1822, are equations which can be used to determine the velocity vector field that applies to a fluid, given some initial conditions. They arise from the application of Newton's second law in combination with a fluid stress (due to viscosity) and a pressure term. For almost all real situations, they result in a system of nonlinear partial differential equations; however, with certain simplifications (such as 1-dimensional motion) they can sometimes be reduced to linear differential equations. Usually, however, they remain nonlinear, which makes them difficult or impossible to solve; this is what causes the turbulence and unpredictability in their results. 
+
+
+<b>2. Derivation of the Navier-Stokes Equations </b>
+The Navier-Stokes equations can be derived from the basic conservation and continuity equations applied to properties of fluids. In order to derive the equations of fluid motion, we must first derive the continuity equation (which dictates conditions under which things are conserved), apply the equation to conservation of mass and momentum, and finally combine the conservation equations with a physical understanding of what a fluid is.
+
+
+
+<b>  2.1. Continuity Equation </b>
+The basic continuity equation is an equation which describes the change of an intensive property \(L\). An intensive property is something which is independent of the amount of material you have. For instance, temperature would be an intensive property; heat would be the corresponding extensive property. The volume \(\Omega\) is assumed to be of any form; its bounding surface area is referred to as \(\partial\Omega\). The continuity equation derived can later be applied to mass and momentum.
+
+
+<b>2.1.1. Reynold's Transport Theorem </b>
+The first basic assumption is that of Reynold's Transport Theorem, usually symbolized as follows: \[\frac{d}{dt}\int_\Omega L \;dV = - \int_{\partial\Omega} L\vec v \cdot \vec n\;dA - \int_\Omega Q\; dV.\] The left hand side of the equation denotes the rate of change of the property \(L\) contained inside the volume \(\Omega\). The right hand side is the sum of two terms: 
+
+
+
+<ul>
+<li> A flux term, \(\int_{\partial\Omega} L\vec v \cdot \vec n\;dA\), which indicates how much of the property \(L\) is leaving the volume by flowing over the boundary \(\partial\Omega\) </li>
+<li> A sink term, \(\int_\Omega Q\; dV\), which describes how much of the property \(L\) is leaving the volume due to sinks or sources inside the boundary 
+</li>
+</ul>
+In plain English, this equation states that the change in the total amount of a property is due to how much flows out through the volume boundary as well as how much is lost or gained through sources or sinks inside the boundary. For example, if the intensive property we are dealing with is temperature, the equations states that the total change in heat is the sum of the heat flux (heat flowing out of the boundary) and the heat sources or sinks in the medium. If the intensive property we're dealing with is density, then the equation is simply a statement of conservation of mass: the change in mass is the sum of what leaves the boundary and what appears within it; no mass is left unaccounted for. 
+<b> 2.1.2. Divergence Theorem </b> 
+The Divergence Theorem allows the flux term of the above equation to be rexpressed as a volume integral. By the Divergence Theorem, \[\int_{\partial\Omega} L\vec v\cdot\vec n\;dA = \int_{\Omega} \nabla\cdot(L\vec v)\;dV.\] Therefore, we can now rewrite our previous equation as \[\frac{d}{dt}\int_\Omega L \;dV = - \int_{\Omega} \nabla\cdot(L\vec v) + Q\; dV.\] 
+<b>2.1.3. Resulting Equation</b> 
+Leibniz's Rule states that \[\frac{d}{dx}\int_a^b f(x,y)\;dy = \int_a^b \frac{d}{dx}f(x,y)\;dy.\] Thus, after applying this rule to the previous equation, we find that \[\int_\Omega \frac{d}{dt}L \;dV = - \int_{\Omega} \nabla\cdot(L\vec v) + Q\; dV.\] Equivalently, \[\int_\Omega \frac{d}{dt}L + \nabla\cdot(L \vec v) + Q\;dV = 0.\] This relation applies to any control volume \(\Omega\); the only way the above equality remains true for all control volumes is if the integrand itself is zero. Thus, we arrive at the general form of the continuity equation \[\frac{dL}{dt} + \nabla\cdot(L\vec v) + Q = 0.\] 
+<b>  2.2. Conservation of Mass </b> 
+Applying the continuity equation to density (the intensive property equivalent to mass), we obtain \[\frac{d\rho}{dt} + \nabla\cdot(\rho\vec v) + Q = 0.\] This is the same as conservation of mass because we are operating with a constant control volume \(\Omega\). With no sources or sinks of mass \((Q=0)\), \[\frac{d\rho}{dt} + \nabla\cdot(\rho\vec v) = 0.\] This is the equation of conversation of mass.
+
+In some cases, such as when we have a pipe pumping fluid in or out of the system inside the control volume, we might not want to assume that \(Q=0\); however, for the general case, we make the assumption that mass is not added or removed from the system. 
+However, in certain cases it is useful to simplify it further. For an incompressible fluid, the density is constant. Setting the derivative of density equal to zero and dividing through by a constant \(\rho\), we obtain the simplest form of the equation \[\nabla\cdot\vec v = 0.\] 
+<b>  2.3. Material Derivative </b>  
+A necessary concept for the derivation of the conservation of momentum equations is that of the material derivative. A normal derivative is the rate of change of of an intensive property at a point. For instance, the value \(\frac{dT}{dt}\) could be the rate of change of temperature at a point \((x,y)\). However, a material derivative is the rate of change of an intensive property on a particle in a velocity field. It must incorporate two things:   
+<ul>
+<li> Rate of change of the property, \(\frac{dL}{dt}\) </li>
+<li> Change in position of othe particle in the velocity field \(\vec v\) 
+</li>
+</ul>
+Logically speaking, therefore, the material derivative can be defined as \[\frac{Du}{Dt} = \frac{du}{dt} + (\vec v \cdot \nabla)u.\] The expression \[(\vec v \cdot \nabla)u\] represents the directional derivative of \(u\) in the direction of the velocity \(\vec v\).  
+<b>  2.4. Conversation of Momentum </b>  
+Although the most rigorous derivation of the conservation of momentum equations also stems from the general form continuity equation formed above, a quicker and nearly as rigorous derivation can be done using Newton's laws and an application of the chain rule. Basic physics dictates that \[\vec F = m\vec a.\] Allowing for the body force \(\vec F=\vec b\) and substituting density for mass, we get a similar equation \[\vec b = \rho \frac{d}{dt} \vec v(x,y,z,t).\] Note that we can substitute density for mass because we are, as before, operating with a fixed control volume and infinitesimal fluid parcels. 
+The body force \(\vec b\) is a force that acts throughout the body of fluid (as opposed to, say, a shear force, which acts parallel to a plane). 
+Applying the chain rule to the derivative of velocity, we get \[\vec b = \rho(\frac{\partial \vec v}{\partial t} + \frac{\partial \vec v}{\partial x}\frac{\partial x}{\partial t} + \frac{\partial \vec v}{\partial y}\frac{\partial y}{\partial t} + \frac{\partial \vec v}{\partial z}\frac{\partial z}{\partial t}).\] Equivalently, \[\vec b = \rho(\frac{\partial \vec v}{\partial t} + \vec v \cdot \nabla \vec v).\] Substituting the value in parentheses for the definition of a material derivative, we obtain our final equation of \[\rho\frac{D\vec v}{Dt} = \vec b.\] 
+<b>  2.5. Equations of Motion </b>  
+The conservations equations derived above, in addition to a few assumptions about the forces and the behaviour of fluids, lead to the equations of motionfor fluids.  
+We assume that the body force on the fluid parcels is due to two components, fluid stresses and other, external forces. \[\vec b = \nabla \cdot \sigma + \vec f.\] Here, \(\sigma\) is the stress tensor, and \(\vec f\) represents external forces. Intuitively, the fluid stress is represtented as the divergence of the stress tensor because the divergence is the extent to which the tensor acts like a sink or source; in other words, the divergence of the tensor results in a momentum source or sink, also known as a force. For many applications it is sufficient to say that \(\vec f\) is composed only of gravity, but for now we will leave the equation in its most general form.  
+
+
+<b>  2.6. Stresses </b>  
+The equations of motion depend on the stress tensor \(\sigma\). The tensor can be represented as \[\sigma = \left( \begin{array}{ccc} \sigma_{xx} &amp; \tau_{xy} &amp; \tau_{xz} \\ \tau_{yx} &amp; \sigma_{yy} &amp; \tau_{yz} \\ \tau_{zx} &amp; \tau_{zy} &amp; \sigma_{zz} \end{array} \right).\] A tensor is a generalization of the concept of the higher-order quantity; a vector is represented as a first order tensor, a matrix as a second order tensor, a 3D matrix is a third order tensor, and so on. 
+<div class="separator" style="clear: both; text-align: center;">
+<a href="http://1.bp.blogspot.com/-5BLxak1Vn78/Th_Hgb47GOI/AAAAAAAAAAY/xKmfKerYQ-s/s1600/Stresses.gif" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="282" src="http://1.bp.blogspot.com/-5BLxak1Vn78/Th_Hgb47GOI/AAAAAAAAAAY/xKmfKerYQ-s/s320/Stresses.gif" width="320" /></a></div>
+\(\tau_{ab}\) indicates the stress on the plane perpendicular to the axis \(a\) and in the direction of the axis \(b\). Thus, when \(a=b\), \(\tau_{ab}\) would be a normal stress, while otherwise it would be a shear stress. For future reference, note that the divergence of a tensor is a vector where each component is the divergence of the respective column vector of the tensor. 
+
+
+<b>  2.7. General Form of the Navier-Stokes Equation </b>  
+The stress tensor \(\sigma\) denoted above is often divided into two terms of interest in the general form of the Navier-Stokes equation. The two terms are the volumetric stress tensor, which tends to change the volume of the body, and the stress deviator tensor, which tends to deform the body. The volumetric stress tensor represents the force which sets the volume of the body (namely, the pressure forces). The stress deviator tensor represents the forces which determine body deformation and movement, and is composed of the shear stresses on the fluid. Thus, \(\sigma\) is broken down into 
+\[\sigma = \left( \begin{array}{ccc} \sigma_{xx} &amp; \tau_{xy} &amp; \tau_{xz} \\ \tau_{yx} &amp; \sigma_{yy} &amp; \tau_{yz} \\ \tau_{zx} &amp; \tau_{zy} &amp; \sigma_{zz} \end{array} \right) = \] \[ = -\left( \begin{array}{ccc} p &amp; 0 &amp; 0 \\ 0 &amp; p &amp; 0 \\ 0 &amp; 0 &amp; p \end{array} \right) +\]\[+ \left( \begin{array}{ccc} \sigma_{xx} + p &amp; \tau_{xy} &amp; \tau_{xz} \\ \tau_{yx} &amp; \sigma_{yy} + p &amp; \tau_{yz} \\ \tau_{zx} &amp; \tau_{zy} &amp; \sigma_{zz} + p \end{array} \right).\] Denoting the stress deviator tensor as \(T\), we can make the substitution \[\sigma = -pI + T.\]
+
+Substituting this into the previous equation, we arrive at the most general form of the Navier-Stokes equation: \[\rho\frac{D\vec v}{Dt} = -\nabla p + \nabla \cdot T + \vec f.\] 
+Although this is the general form of the Navier-Stokes equation, it cannot be applied until it has been more specified. First off, depending on the type of fluid, an expression must be determined for the stress tensor \(T\); secondly, if the fluid is not assumed to be incompressible, an equation of state and an equation dictating conservation of energy are necessary. 
+
+<b>  2.8. Physical Explanation of the Navier-Stokes Equation </b>  
+The Navier-Stokes equation makes a surprising amount of intuitive sense given the complexity of what it is modeling. The left hand side of the equation, \[\rho\frac{D\vec v}{Dt},\] is the force on each fluid particle. The equation states that the force is composed of three terms:   
+
+<ul>
+<li> \(-\nabla p\): A pressure term (also known as the volumetric stress tensor) which prevents motion due to normal stresses. The fluid presses against itself and keeps it from shrinking in volume. </li>
+<li> \(\nabla\cdot T\): A stress term (known as the stress deviator tensor) which causes motion due to horizontal friction and shear stresses. The shear stress causes turbulence and viscous flows - if you drag your hand through a liquid, you will note that the moving liquid also causes nearby liquid to start moving in the same direction. Turbulence is the result of the shear stress. </li>
+<li> \(\vec f\): The force term which is acting on every single fluid particle. 
+</li>
+</ul>
+This intuitively explains turblent flows and some common scenarios. For example, if water is sitting in a cup, the force (gravity) \(\rho g\) is equal to the pressure term because \(\frac{d}{dz}(\rho g z) = \rho g.\) Thus, since gravity is equivalent to the pressure, the fluid will sit still, which is indeed what we observe when water is sitting in a cup. 
+<b>3. Navier-Stokes Fluids </b>  
+The general form Navier-Stokes equation derived above cannot be used in practice, as it has a number of unspecified elements. These are usually specific to the fluid which the equation is being applied to. A number of fluid models exist, varying the tensor \(T\) and the equation of state (for compressible fluids).  
+
+<b>  3.1. Newtonian Fluids </b>  
+For simplicity of derivation, we will assume the Newtonian fluid is incompressible, though in truth many common fluids (such as air) are compressible, and the equations and methods have been thoroughly studied for compressible Newtonian fluids as well. 
+
+<b> 3.1.1. Fluid Stress</b>
+The basis for the Newtonian fluid equations is the assumption about the nature of the stress tensor. For a Newtonian Fluid, the stress is proportional to the rate of deformation (the change in velocity in the directions of the stress). In other words, \[\tau_{ij} = \mu\left(\frac{\partial u_i}{\partial x_j} + \frac{\partial u_j}{\partial x_i}\right).\] 
+The proportionality constant \(\mu\) is called the viscosity of the fluid, and defines how easily the fluid flows when subjected to body forces.  
+
+<b>Stress Divergence</b>
+The Navier-Stokes equation uses the divergence of stress, \(\nabla\cdot T\). We can calculate the stress term \[\nabla\cdot\sigma = \mu \nabla\cdot\left( \begin{array}{ccc} \sigma_{xx} &amp; \tau_{xy} &amp; \tau_{xz} \\ \tau_{yx} &amp; \sigma_{yy} &amp; \tau_{yz} \\ \tau_{zx} &amp; \tau_{zy} &amp; \sigma_{zz} \end{array} \right) =\]\[= \mu\left( \begin{array}{ccc} 2\frac{\partial u}{\partial x} &amp; \frac{\partial u}{\partial y}+\frac{\partial v}{\partial x} &amp; \frac{\partial u}{\partial z}+\frac{\partial w}{\partial x} \\ \frac{\partial u}{\partial y}+\frac{\partial v}{\partial x} &amp; 2\frac{\partial v}{\partial y} &amp; \frac{\partial v}{\partial z} + \frac{\partial w}{\partial y} \\ \frac{\partial u}{\partial z}+\frac{\partial w}{\partial x} &amp; \frac{\partial v}{\partial z} + \frac{\partial w}{\partial y} &amp; 2\frac{\partial w}{\partial z} \end{array}\right). \] 
+We can calculate the \(x\) term of the divergence: \begin{align*} (\nabla\cdot\sigma)_i &amp;= \mu\frac{\partial}{\partial x}(2\frac{\partial u}{\partial x}) + \frac{\partial}{\partial y}(\frac{\partial u}{\partial y}+\frac{\partial v}{\partial x}) + \frac{\partial}{\partial z}(\frac{\partial u}{\partial z}+\frac{\partial w}{\partial x}) = \\
+&amp;= \mu\frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2} + \frac{\partial^2 u}{\partial z^2} + \frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 v}{\partial x \partial y} + \frac{\partial^2 w}{\partial x \partial z} = \\
+&amp;= \mu\nabla^2 u + \mu\frac{\partial}{\partial x}(\frac{\partial u}{\partial x} + \frac{\partial v}{\partial y} + \frac{\partial w}{\partial z}) = \\
+&amp;= \mu\nabla^2 u + \mu\frac{\partial}{\partial x}(\nabla\cdot v)\\ &amp;= \nabla^2 u + 0 = \\
+&amp;= \mu\nabla^2 u.
+\end{align*} 
+We can extend this to the other divergence terms, so we can replace the divergence with a vector Laplacian: \[\nabla\cdot T = \mu \nabla^2 v.\] 
+
+<b>Newtonian Fluid Equation</b>
+Without making any assumptions about the form of the body force \(f\), the final equation for an incompressible Newtonian fluid would be \[\rho\frac{Dv}{Dt} = -\nabla p + \mu \nabla^2 v + f.\] 
+<b>  3.2. Non-Newtonian Fluids </b>  
+Though Newtonian fluids are the most commonly encountered and the most studied of all fluid models, a few others exist as well.  
+\subsubsection{Bingham Plastics} A Bingham Plastic is similar to a Newtonian fluid, but differs in one key aspect: while Newtonian fluids will start motion as soon as some shear stress is applied, a Bingham plastic fluid is able to resist stress until the stress passes a certain yield threshold. Afterwards, it will act the same as a Newtonian fluid. Some examples of Bingham plastics include toothpaste and clay.  
+\subsubsection{Power-law Fluids} Power-law fluids differ from Newtonian fluids in that the stress in a power-law fluid is raised to an exponent, \(n\), called the flow behaviour index. While Newtonian fluids follow the equation \[\tau = \mu \left( \frac{\partial u}{\partial y} \right),\] power-law fluids model stress according to the equation \[\tau = \mu \left( \frac{\partial u}{\partial y} \right)^n.\] 
+Thus, Newtonian fluids are a subset of power-law fluids, since a Newtonian fluid is a power-law fluid with \(n=1\). When \(n&lt;1\), the material is termed a pseudoplastic; pseudoplastics decrease in viscosity as the shear stress increases. Common examples of pseudoplastics include lava, whipped cream, blood, and many polymer solutions. If \(n&gt;1\), the material is termed a dilatant; dilatants are rare, and have an increasing viscosity with increasing shear stress. They tend to act in very non-intuitive manners. For instance, YouTube videos demonstrate oobleck (a mixture of cornstarch and water) becoming nearly solid when put under stress, but remaining liquid otherwise; this would allow someone to run across a pool of oobleck, but sink if they stood still on it. 
+<b>  Final Word: Simulations </b>
+Due to the complex nature of the Navier-Stokes equations, analytical solutions range from difficult to practically impossible, so the most common way to make use of the Navier-Stokes equations is through simulation and approximation. A number of simulation methods exist, and in the next section, we will examine one of the algorithms often used in computer graphics and interactive applications.
