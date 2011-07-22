@@ -50,6 +50,7 @@ int main(int argc, char** argv){
     int index = 0;
     statement* statement = parse_statement(tokens, &index, num_tokens);
     print_statement(statement);
+    free_statement(statement);
 
     /* Free all tokens */
     for(int i = 0; i < num_tokens; i++)

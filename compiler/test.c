@@ -1,1 +1,1 @@
-int test = 5;
+int test = 5++;

@@ -3,101 +3,34 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct _type {
-    struct _type* ptr_to;
-    int size;
-    char* name;
-} type;
+/* This file describes the statement and expression parser. The parser
+ * converts the token stream into a series of statements to be compiled
+ * into machine code later. 
+ *
+ * Unlike some languages such as Lisp or Ruby, C differentiates between 
+ * statements and expressions, so the parser has two separate data structures
+ * for the two types of syntax elements. Note that since some expressions also
+ * double as full-fledged statements (such as var++ and x = 5), there is also
+ * a generic statement which stores an inner expression.
+ *
+ * This parser uses a modified Shunning-Yard algorithm for parsing infix 
+ * expressions. It uses a look-behind token to resolve some semantic
+ * conflicts, such as whether the asterisk * means multiplication or
+ * dereferencing. (x + *y has a different meaning completely from x * y.)
+ *
+ * In addition to doing parsing, the parser creates and maintains a type table
+ * which stores all the known primitive types and any user defined types. The
+ * types stored in this type table can later be used for compiling to assembly.
+ */
 
-typedef struct _expression {
-    int expression_type;
-    int num_children;
-    struct _expression** children;
-    int num_value;
-    char* str_value;
-} expression;
-
-int EXPRESSION_NUM_CONST = 1;
-
-typedef struct _function {
-
-} function;
-
-typedef struct _statement {
-    int statement_type;
-    type* var_type;
-    char* ident;
-    expression* expr;
-    function* func;
-} statement;
-
-int STATEMENT_ASSIGN = 1;
-
-struct {
-    int num;
-    type** types;
-} type_table;
-
-int TYPE_VOID = 0;
-int TYPE_CHAR = 1;
-int TYPE_INT = 2;
-
-type* create_type(int size){
-    type* t = calloc(1, sizeof(type));
-    t->size = size;
-    return t;
-}
-
-type* create_type_ptr(type* point_to){
-    type* type = create_type(4);
-    type->ptr_to = point_to;
-    return type;
-}
-
-void init_type_table(){
-    /* Initialize known primitive types */
-    type_table.num = 3;
-    type_table.types = calloc(type_table.num, sizeof(type*));
-
-    type* type_void = create_type(0);
-    type* type_int = create_type(4);
-    type* type_char = create_type(1);
-
-    type_void->name = "void";
-    type_int->name = "int";
-    type_char->name = "char";
-
-    type_table.types[TYPE_VOID] = type_void;
-    type_table.types[TYPE_INT] = type_int;
-    type_table.types[TYPE_CHAR] = type_char;
-}
-
+/* Initialize all aspects of the parser */
 void init_parser(){
     init_type_table();
-
 }
 
-expression* create_expression(int t){
-    expression* expr = calloc(1, sizeof(expression));
-    expr->expression_type = t;
-    expr->num_children = 0;
-    return expr;
-}
-
-expression* numeric_constant_expression(int num){
-    expression* expr = create_expression(EXPRESSION_NUM_CONST);
-    expr->num_value = num;
-    return expr;
-}
-
-expression* zero_expression(){
-    return numeric_constant_expression(0);
-}
-
-statement* create_statement(int t){
-    statement* st = calloc(1, sizeof(statement));
-    st->statement_type = t;
-    return st;
+/* Delete all parser resources */
+void del_parser(){
+    del_type_table();
 }
 
 statement* create_declaration_statement(type* type, char* ident){
@@ -116,44 +49,7 @@ statement* create_assign_statement(type* type, char* ident, expression* expr){
     return st;
 }
 
-void print_expression(expression* expr){
-    if(expr->expression_type == EXPRESSION_NUM_CONST)
-        printf("%d ", expr->num_value);
-    else
-        printf("type(%d) ", expr->expression_type);
-}
 
-void print_type(type* type){
-    if(type->ptr_to == NULL)
-        printf("%s", type->name);
-    else {
-        print_type(type->ptr_to);
-        printf("*");
-    }
-}
-
-void print_statement(statement* st){
-    if(st->statement_type == STATEMENT_ASSIGN){
-        printf("ASSIGN ");
-        print_type(st->var_type);
-        printf(" %s = ", st->ident);
-        print_expression(st->expr);
-    }
-
-}
-
-type* parse_type(token** tokens, int* index, int len){
-    int first_type = tokens[*index]->type;
-    (*index)++;
-    if(first_type == TOKEN_INT)
-        return type_table.types[TYPE_INT];
-    if(first_type == TOKEN_CHAR)
-        return type_table.types[TYPE_CHAR];
-    if(first_type == TOKEN_VOID)
-        return type_table.types[TYPE_VOID];
-
-    else return NULL;
-}
 
 statement* parse_typedef(token** tokens, int* index, int len){
     return NULL;
@@ -167,10 +63,7 @@ function* parse_function(token** tokens, int* index, int len){
     return NULL;
 }
 
-expression* parse_expression(token** tokens, int* index, int len){
-    return NULL;
-}
-
+/* Parse a statement */
 statement* parse_statement(token** tokens, int* index, int len){
     if(*index >= len) error("Unexpected end of token stream");
 

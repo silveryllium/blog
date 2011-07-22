@@ -53,3 +53,101 @@ char* read_file(char* fname){
     return buffer;
 }
 
+/* Stack */
+typedef struct _stack {
+    int size;
+    int num;
+    void** vals;
+} stack;
+
+typedef struct _queue {
+    int size;
+    int num;
+    void** vals;
+} queue;
+
+stack* make_stack(){
+    stack* stk = calloc(1, sizeof(stack));
+    stk->size = 10;
+    stk->vals = calloc(stk->size, sizeof(void*));
+    return stk;
+}
+
+void stack_push(stack* stk, void* ptr){
+    if(stk->num == stk->size){
+        stk->size += 20;
+        stk->vals = realloc(stk->vals, stk->size * sizeof(void*));
+    }
+
+    stk->vals[stk->num] = ptr;
+    stk->num++; 
+}
+
+void* stack_pop(stack* stk){
+    if(stk->num == 0)
+        return NULL;
+
+    stk->num--;
+    void* ptr = stk->vals[stk->num];
+    return ptr;
+}
+
+void* stack_peek(stack* stk){
+    if(stk->num == 0)
+        return NULL;
+
+    void* ptr = stk->vals[stk->num-1];
+    return ptr;
+}
+
+void free_stack(stack* stk){
+    free(stk->vals);
+    free(stk);
+}
+
+queue* make_queue(){
+    queue* q = calloc(1, sizeof(queue));
+    q->size = 10;
+    q->vals = calloc(q->size, sizeof(void*));
+    return q;
+}
+
+void* queue_pop(queue* q){
+    if(q->num == 0)
+        return NULL;
+
+    q->num--;
+    void* ptr = q->vals[q->num];
+    return ptr;
+}
+
+void enqueue(queue* q, void* ptr){
+    if(ptr == NULL)
+        error("Queueing null");
+
+    if(q->num == q->size){
+        q->size += 20;
+        q->vals = realloc(q->vals, q->size * sizeof(void*));
+    }
+
+    q->vals[q->num] = ptr;
+    q->num++; 
+}
+
+void* dequeue(queue* q){
+    if(q->num == 0)
+        return NULL;
+
+    q->num--;
+    void* ptr = q->vals[0];
+    for(int i = 0; i < q->num; i++)
+        q->vals[i] = q->vals[i+1];
+    return ptr;
+}
+
+void free_queue(queue* q){
+    free(q->vals);
+    free(q);
+}
+
+

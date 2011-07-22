@@ -33,54 +33,66 @@ int TOKEN_PLUS  = 7;
 int TOKEN_MINUS = 8;
 int TOKEN_TIMES = 9;
 int TOKEN_DIV  = 10;
+int TOKEN_ADDR = 11;
 
 /* Punctuation: ; , .*/
-int TOKEN_SEMICOLON = 11;
-int TOKEN_DOT = 50;
-int TOKEN_COMMA = 12;
+int TOKEN_SEMICOLON = 12;
+int TOKEN_DOT = 13;
+int TOKEN_COMMA = 14;
 
 /* Comparison and boolean operations: > < ! */
-int TOKEN_GREATER = 22;
-int TOKEN_LESS = 23;
-int TOKEN_NOT = 26;
+int TOKEN_GREATER = 15;
+int TOKEN_LESS = 16;
+int TOKEN_NOT = 17;
 
 /* Assignment: = */
-int TOKEN_ASSIGN = 20;
+int TOKEN_ASSIGN = 18;
 
 /* Keywords: typedef, int, char, other types, FILE, >=, ... */
 
 
 /* Types: void, int, char, file, long */
-int TOKEN_VOID = 33;
-int TOKEN_INT = 14;
-int TOKEN_CHAR = 15;
-int TOKEN_FILE = 16;
-int TOKEN_LONG = 17;
+int TOKEN_VOID = 19;
+int TOKEN_INT = 20;
+int TOKEN_CHAR = 21;
+int TOKEN_FILE = 22;
+int TOKEN_LONG = 23;
 
 /* Control flow: if, while, for, return */
-int TOKEN_RETURN = 19;
-int TOKEN_IF = 37;
-int TOKEN_WHILE = 38;
-int TOKEN_FOR = 39;
+int TOKEN_RETURN = 24;
+int TOKEN_IF = 25;
+int TOKEN_WHILE = 26;
+int TOKEN_FOR = 27;
 
 /* Boolean operations: || && >= <= == */
-int TOKEN_EQUALS = 21;
-int TOKEN_OR = 24;
-int TOKEN_AND = 25;
-int TOKEN_GREATEREQ = 27;
-int TOKEN_LESSEQ = 28;
+int TOKEN_EQUALS = 28;
+int TOKEN_OR = 29;
+int TOKEN_AND = 30;
+int TOKEN_GREATEREQ = 31;
+int TOKEN_LESSEQ = 32;
 
 /* Other keywords: typedef, struct, sizeof, -> */
-int TOKEN_REF = 51;
-int TOKEN_TYPEDEF = 13;
-int TOKEN_STRUCT = 18;
-int TOKEN_SIZEOF = 34;
+int TOKEN_REF = 33;
+int TOKEN_TYPEDEF = 34;
+int TOKEN_STRUCT = 35;
+int TOKEN_SIZEOF = 36;
 
 /* Token types which have associated data: strings, characters, and identifiers */
-int TOKEN_STRING = 29;
-int TOKEN_CHARACTER = 30; 
-int TOKEN_IDENT = 31;
-int TOKEN_NUMBER = 52;
+int TOKEN_STRING = 37;
+int TOKEN_CHARACTER = 38; 
+int TOKEN_IDENT = 39;
+int TOKEN_NUMBER = 40;
+
+int TOKEN_INCR = 41;
+int TOKEN_DECR = 42;
+
+/* Used in the parser */
+int TOKEN_UNARY_DEREF = 100;
+int TOKEN_UNARY_MINUS = 200;
+int TOKEN_POSTINCR = 300;
+int TOKEN_POSTDECR = 400;
+int TOKEN_PREINCR = 500;
+int TOKEN_PREDECR = 600;
 
 /* The token type, containing an int type and the associated data */
 typedef struct _token {
@@ -91,10 +103,11 @@ typedef struct _token {
 /* If the current index is on a single character token, create the token, else return NULL */
 token* get_single_char_token(int index, char* text){
     /* All the types of single-character tokens and their corresponding characters */
-    char single[16] = {'(', ')', '{', '}', '[', ']', '+', '-', '*', '/', ';', ',', '>', '<', '=', '.'};
-    int single_token_types[16] = {TOKEN_OPAREN, TOKEN_CPAREN, TOKEN_OBRACE, TOKEN_CBRACE, TOKEN_OBRACKET, TOKEN_CBRACKET,
-        TOKEN_PLUS, TOKEN_MINUS, TOKEN_TIMES, TOKEN_DIV, TOKEN_SEMICOLON, TOKEN_COMMA, TOKEN_GREATER, TOKEN_LESS, TOKEN_ASSIGN, TOKEN_DOT};
-    int singles = 16;
+    char single[18] = {'(', ')', '{', '}', '[', ']', '+', '-', '*', '/', ';', ',', '>', '<', '=', '.', '&', '!'};
+    int single_token_types[18] = {TOKEN_OPAREN, TOKEN_CPAREN, TOKEN_OBRACE, TOKEN_CBRACE, TOKEN_OBRACKET, TOKEN_CBRACKET,
+        TOKEN_PLUS, TOKEN_MINUS, TOKEN_TIMES, TOKEN_DIV, TOKEN_SEMICOLON, TOKEN_COMMA, TOKEN_GREATER, TOKEN_LESS, 
+        TOKEN_ASSIGN, TOKEN_DOT, TOKEN_ADDR, TOKEN_NOT};
+    int singles = 18;
 
     /* Test each type of token */
     for(int i = 0; i < singles; i++){
@@ -113,11 +126,12 @@ token* get_single_char_token(int index, char* text){
 /* If the current index is on a keyword, create a keyword token and return the length of it, else return NULL */
 token* get_keyword_token(int index, char* text, int* len){
     /* All possible keywords */
-    char* keywords[18] = {"typedef", "int", "char", "FILE", "long", "struct", "return",
-             "equals", "||", "&&", ">=", "<=", "void", "sizeof", "for", "while", "if", "->"};
-    int keyword_token_types[18] = {TOKEN_TYPEDEF, TOKEN_INT, TOKEN_CHAR, TOKEN_FILE, TOKEN_LONG, TOKEN_STRUCT, TOKEN_RETURN,
-        TOKEN_EQUALS, TOKEN_OR, TOKEN_AND, TOKEN_GREATEREQ, TOKEN_LESSEQ, TOKEN_VOID, TOKEN_SIZEOF, TOKEN_FOR, TOKEN_WHILE, TOKEN_IF, TOKEN_REF};
-    int num_keywords = 18;
+    char* keywords[20] = {"typedef", "int", "char", "FILE", "long", "struct", "return",
+             "equals", "||", "&&", ">=", "<=", "void", "sizeof", "for", "while", "if", "->", "++", "--"};
+    int keyword_token_types[20] = {TOKEN_TYPEDEF, TOKEN_INT, TOKEN_CHAR, TOKEN_FILE, TOKEN_LONG, TOKEN_STRUCT, TOKEN_RETURN,
+        TOKEN_EQUALS, TOKEN_OR, TOKEN_AND, TOKEN_GREATEREQ, TOKEN_LESSEQ, TOKEN_VOID, TOKEN_SIZEOF, 
+        TOKEN_FOR, TOKEN_WHILE, TOKEN_IF, TOKEN_REF, TOKEN_INCR, TOKEN_DECR};
+    int num_keywords = 20;
 
     /* Get length of text, so we don't overflow */
     int text_len = strlen(text);
@@ -425,7 +439,7 @@ token** tokenize(char* text, int* num_tokens){
         }
 
         /* Number */
-        if(text[index] >= '0' && text[index] <= 9){
+        if(text[index] >= '0' && text[index] <= '9'){
             int num_length = 0;
             tok = get_num_token(index, text, &num_length);
             add_token(tok, &tokens, &allocated, &num);
