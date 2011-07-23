@@ -363,15 +363,6 @@ int op_precedence(int tok_type){
     return 0;
 }
 
-/* Increment the token pointer and make sure we're not out of bounds on the token stream */
-void inc_ptr(int* index, int len){
-    (*index)++;
-
-    /* Make sure we're not out of bounds */
-    if(*index >= len)
-        error("Unexpected end of token stream.");
-}
-
 /* Parse a value literal */
 expression* parse_const_expr(token** tokens, int* index, int len){
     expression* expr = NULL;

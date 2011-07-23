@@ -10,6 +10,15 @@ void error(char* error){
     exit(1);
 }
 
+/* Increment the token pointer and make sure we're not out of bounds on the token stream */
+void inc_ptr(int* index, int len){
+    (*index)++;
+
+    /* Make sure we're not out of bounds */
+    if(*index >= len)
+        error("Unexpected end of token stream.");
+}
+
 /* Duplicate a string */
 char *strdup (char *s) {
     char *d = (char *)(malloc (strlen (s) + 1)); // Allocate memory

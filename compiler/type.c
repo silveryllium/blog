@@ -4,8 +4,14 @@
  */
 typedef struct _type {
     struct _type* ptr_to;
+    struct _type* alias;
     int size;
     char* name;
+
+    int struct_type;
+    int num_fields;
+    struct _type** field_types;
+    char** field_names;
 } type;
 
 /* Global type table, stores array of known types */
@@ -35,21 +41,43 @@ type* create_type(int size){
 
 /* Print the type in some useful debugging format to stdout */
 void print_type(type* type){
-    if(type->ptr_to == NULL)
-        printf("%s", type->name);
-    else {
-        print_type(type->ptr_to);
+    if(type->ptr_to == NULL) {
+        if(!type->struct_type)
+            printf("%s", type->name);
+        else {
+            printf("struct %s { ", type->name == NULL ? "" : type->name);
+            for(int i = 0; i < type->num_fields; i++){
+                print_type(type->field_types[i]);
+                printf(" ");
+                printf("%s", type->field_names[i]);
+                printf("; ");
+            }
+            printf(" }");
+        }
+    } else {
+        if(type->ptr_to->struct_type){
+            printf("struct %s", type->ptr_to->name == NULL ? "" : type->ptr_to->name);
+        } else
+            print_type(type->ptr_to);
         printf("*");
     }
 }
 
 /* Free memory used by a type */
 void free_type(type* type){
+    if(type->struct_type)
+        return;
+
     if(type->ptr_to != NULL)
         free_type(type->ptr_to);
     if(type->name != NULL)
         free(type->name);
     free(type);
+}
+
+void free_struct_type(type* type){
+    type->struct_type = 0;
+    free_type(type);
 }
 
 /* Copy a type */
@@ -92,8 +120,12 @@ void init_type_table(){
 
 /* Delete the type table and any memory it uses */
 void del_type_table(){
-    for(int i = 0; i < type_table.num; i++)
-        free_type(type_table.types[i]);
+    for(int i = 0; i < type_table.num; i++){
+        if(type_table.types[i]->struct_type)
+            free_struct_type(type_table.types[i]);
+        else
+            free_type(type_table.types[i]);
+    }
     free(type_table.types);
 }
 
@@ -123,13 +155,79 @@ type* parse_type(token** tokens, int* index, int len){
         }
     }
 
+    /* If this is a struct, parse it */
+    else if(first_type == TOKEN_STRUCT){
+        type* struct_type;
+
+        /* If it's a named struct, we have to add it to our known list */
+        if(tokens[*index]->type == TOKEN_IDENT){
+            for(int i = 0; i < type_table.num; i++){
+                if(type_table.types[i]->struct_type && strcmp(type_table.types[i]->name, tokens[*index]->data) == 0)
+                    base = type_table.types[i];
+            }
+
+            if(base == NULL){
+                struct_type = create_type(0);
+                struct_type->struct_type = 1;
+                struct_type->name = strdup(tokens[*index]->data);
+                add_to_type_table(struct_type);
+            }
+            inc_ptr(index, len);
+        }
+
+        if(base == NULL) {
+            if(tokens[*index]->type != TOKEN_OBRACE)
+                error("Expected opening brace");
+            else
+                inc_ptr(index, len);
+
+            while(tokens[*index]->type != TOKEN_CBRACE){
+                type* field_type = parse_type(tokens, index, len);
+                if(tokens[*index]->type != TOKEN_IDENT)
+                    error("Expected field name identifier");
+                char* ident = strdup(tokens[*index]->data);
+                inc_ptr(index, len);
+
+                if(tokens[*index]->type != TOKEN_SEMICOLON)
+                    error("Expected semicolon after field declaration");
+                inc_ptr(index, len);
+
+                int field_ind = struct_type->num_fields;
+                struct_type->size += field_type->size;
+                struct_type->num_fields++;
+                struct_type->field_types = realloc(struct_type->field_types, struct_type->num_fields * sizeof(type*));
+                struct_type->field_names = realloc(struct_type->field_names, struct_type->num_fields * sizeof(char*));
+                struct_type->field_types[field_ind] = field_type;
+                struct_type->field_names[field_ind] = ident;
+            }
+            inc_ptr(index, len);
+
+            /* Replace copied instances of this type with new copied instances (updated) */
+            for(int i = 0; i < struct_type->num_fields; i++){
+                type* ftype = struct_type->field_types[i];
+                if(ftype->ptr_to != NULL)
+                    ftype = ftype->ptr_to;
+                else
+                    continue;
+
+                if(ftype->struct_type && struct_type->name != NULL && ftype->name != NULL 
+                        && strcmp(ftype->name, struct_type->name) == 0){
+                    free_type(struct_type->field_types[i]);
+                    struct_type->field_types[i] = create_type_ptr(struct_type);
+                }
+            }
+
+            base = struct_type;
+        }
+    }
+
     if(base == NULL)
         error("Unknown type");
 
     /* For every asterisk after the base type, wrap the type in a pointer type */
     while(tokens[*index]->type == TOKEN_TIMES){
         base = create_type_ptr(base);
-        (*index)++;
+        inc_ptr(index, len);
     }
 
     return base;
