@@ -63,6 +63,7 @@ int TOKEN_RETURN = 24;
 int TOKEN_IF = 25;
 int TOKEN_WHILE = 26;
 int TOKEN_FOR = 27;
+int TOKEN_ELSE = 50;
 
 /* Boolean operations: || && >= <= == */
 int TOKEN_EQUALS = 28;
@@ -126,12 +127,12 @@ token* get_single_char_token(int index, char* text){
 /* If the current index is on a keyword, create a keyword token and return the length of it, else return NULL */
 token* get_keyword_token(int index, char* text, int* len){
     /* All possible keywords */
-    char* keywords[20] = {"typedef", "int", "char", "FILE", "long", "struct", "return",
-             "equals", "||", "&&", ">=", "<=", "void", "sizeof", "for", "while", "if", "->", "++", "--"};
-    int keyword_token_types[20] = {TOKEN_TYPEDEF, TOKEN_INT, TOKEN_CHAR, TOKEN_FILE, TOKEN_LONG, TOKEN_STRUCT, TOKEN_RETURN,
+    char* keywords[21] = {"typedef", "int", "char", "FILE", "long", "struct", "return",
+             "equals", "||", "&&", ">=", "<=", "void", "sizeof", "for", "while", "if", "->", "++", "--", "else"};
+    int keyword_token_types[21] = {TOKEN_TYPEDEF, TOKEN_INT, TOKEN_CHAR, TOKEN_FILE, TOKEN_LONG, TOKEN_STRUCT, TOKEN_RETURN,
         TOKEN_EQUALS, TOKEN_OR, TOKEN_AND, TOKEN_GREATEREQ, TOKEN_LESSEQ, TOKEN_VOID, TOKEN_SIZEOF, 
-        TOKEN_FOR, TOKEN_WHILE, TOKEN_IF, TOKEN_REF, TOKEN_INCR, TOKEN_DECR};
-    int num_keywords = 20;
+        TOKEN_FOR, TOKEN_WHILE, TOKEN_IF, TOKEN_REF, TOKEN_INCR, TOKEN_DECR, TOKEN_ELSE};
+    int num_keywords = 21;
 
     /* Get length of text, so we don't overflow */
     int text_len = strlen(text);

@@ -133,7 +133,7 @@ void del_type_table(){
 type* parse_type(token** tokens, int* index, int len){
     int first_type = tokens[*index]->type;
     char* token_str = tokens[*index]->data;
-    (*index)++;
+    inc_ptr(index, len);
 
     type* base = NULL;
 
@@ -221,8 +221,10 @@ type* parse_type(token** tokens, int* index, int len){
         }
     }
 
-    if(base == NULL)
-        error("Unknown type");
+    if(base == NULL){
+        (*index)--;
+        return NULL;
+    }
 
     /* For every asterisk after the base type, wrap the type in a pointer type */
     while(tokens[*index]->type == TOKEN_TIMES){

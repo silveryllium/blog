@@ -372,15 +372,20 @@ expression* parse_const_expr(token** tokens, int* index, int len){
     if(token_type == TOKEN_NUMBER)
         expr = numeric_constant_expression(atoi(tokens[*index]->data));
     if(token_type == TOKEN_STRING)
-        expr = string_constant_expression(tokens[*index]->data);
+        expr = string_constant_expression(strdup(tokens[*index]->data));
     if(token_type == TOKEN_CHAR)
-        expr = char_constant_expression(tokens[*index]->data);
+        expr = char_constant_expression(strdup(tokens[*index]->data));
     
     if(expr == NULL)
         error("Expected constant");
 
     return expr;
 }
+
+/* Dummy token meaning: return self */
+const int TOKEN_RET_SELF = 999;
+token dummy = {type: 999, data: NULL};
+token* self_token = &dummy;
 
 /* 
  * Collapse an operator on the operator stack by applying it to the arguments on the 
@@ -390,8 +395,14 @@ expression* parse_const_expr(token** tokens, int* index, int len){
  */
 expression* collapse_operator(stack* output_stack, stack* op_stack, int tok_type){
     expression* expr = NULL;
+
+    /* Do nothing */
+    if(tok_type == TOKEN_RET_SELF){
+        expr = stack_pop(output_stack);
+    }
+
     /* Replace a unary minus with 0 - value */
-    if(tok_type == TOKEN_UNARY_MINUS){
+    else if(tok_type == TOKEN_UNARY_MINUS){
         expression* first = stack_pop(output_stack);
         expr = create_arithmetic_expr(zero_expression(), first, TOKEN_MINUS);
     }
@@ -488,7 +499,7 @@ int collapse_expression_stack_until(stack* output_stack, stack* op_stack, int fi
  *
  * Main Source: http://en.wikipedia.org/wiki/Shunting-yard_algorithm
  */
-expression* parse_expression(token** tokens, int* index, int len){
+expression* parse_expression(token** tokens, int* index, int len, int end_token){
     /* Create the operator and output stack */
     stack* output_stack = make_stack();
     stack* op_stack = make_stack();
@@ -501,7 +512,7 @@ expression* parse_expression(token** tokens, int* index, int len){
     int previous_token_type = -1;
     
     /* Loop until end of input or a semicolon */
-    while(*index < len && tokens[*index]->type != TOKEN_SEMICOLON){
+    while(*index < len && tokens[*index]->type != end_token){
         int token_type = tokens[*index]->type;
 
         /* 
@@ -544,6 +555,7 @@ expression* parse_expression(token** tokens, int* index, int len){
         if(token_type == TOKEN_NUMBER || token_type == TOKEN_STRING || token_type == TOKEN_CHAR){
             expression* const_expr = parse_const_expr(tokens, index, len);
             stack_push(output_stack, const_expr);
+            stack_push(op_stack, self_token);
         }
 
         /* 
@@ -692,8 +704,11 @@ expression* parse_expression(token** tokens, int* index, int len){
     expression* expr = stack_pop(output_stack);
 
     /* Nothing else should be on the output stack */
-    if(stack_pop(output_stack) != NULL)
+    expression* top;
+    if((top = stack_pop(output_stack)) != NULL){
+        print_expression(top);
         error("Expression remaining on stack");
+    }
 
     /* Free the stacks used */
     free_stack(output_stack);

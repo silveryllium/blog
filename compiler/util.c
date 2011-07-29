@@ -121,15 +121,6 @@ queue* make_queue(){
     return q;
 }
 
-void* queue_pop(queue* q){
-    if(q->num == 0)
-        return NULL;
-
-    q->num--;
-    void* ptr = q->vals[q->num];
-    return ptr;
-}
-
 void enqueue(queue* q, void* ptr){
     if(ptr == NULL)
         error("Queueing null");

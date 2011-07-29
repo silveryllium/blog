@@ -1,5 +1,4 @@
-typedef struct _test {
-    int* i;
-    char c;
-    struct _test* x;
-} test;
+if(5) 
+    printf("x");
+    else
+    printf("Y");
